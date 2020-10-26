@@ -68,7 +68,6 @@
                     </li>
                 </ul>
                 <md-button @click="changeListItemStatus(note)" class="description-list__button">Сохранить изменения</md-button>
-                <md-snackbar :md-active.sync="changesSaved">Изменения сохранены!</md-snackbar>
 
             </md-card-content>
 
@@ -95,8 +94,7 @@
         data() {
             return {
                 listOfTasksInit: false,
-                draggingItem: null,
-                changesSaved: false
+                draggingItem: null
             }
         },
         computed: {
@@ -151,7 +149,7 @@
                     listOfTasks: note.listOfTasks
                 };
                 await this.updateNote(updatedData);
-                this.changesSaved = true
+                this.$message('Изменения сохранены')
             },
         },
     }
