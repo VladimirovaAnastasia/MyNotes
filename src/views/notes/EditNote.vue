@@ -29,20 +29,18 @@
                     <md-progress-bar md-mode="indeterminate" v-if="sending"/>
 
                     <md-card-actions>
-                        <md-button type="submit" class="md-primary" :disabled="sending" @click="submitHandler">
+                        <md-button type="submit" class="md-primary" :disabled="sending">
                             Обновить
                         </md-button>
                     </md-card-actions>
 
                 </md-card>
 
-                <md-snackbar :md-active.sync="isEdited">Заметка была успешно отредактирована!</md-snackbar>
-
             </form>
 
         </div>
 
-        <p v-else>Note not found</p>
+        <p v-else>Заметка не найдена</p>
 
     </div>
 
@@ -63,7 +61,6 @@
                 description: '',
                 color: null,
             },
-            isEdited: false,
             sending: false
         }),
         validations: {
@@ -108,11 +105,8 @@
                     color: this.form.color
                 };
                 await this.$store.dispatch('updateNote', updatedData);
-                this.isEdited = true;
-                setTimeout(() => {
-                    this.$router.push('/')
-                }, 1000)
-
+                await this.$router.push('/');
+                await this.$message('Заметка была успешно отредактирована!');
             }
         },
     }

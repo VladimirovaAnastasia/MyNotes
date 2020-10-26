@@ -102,7 +102,8 @@
                         isArchived: false,
                         isListType: false,
                         listOfTasks: ['']
-                    })
+                    });
+                    await this.$message('Заметка была успешно создана!');
                 } catch (e) {
                 }
             },
