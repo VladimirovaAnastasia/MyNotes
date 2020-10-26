@@ -92,7 +92,7 @@
                 }
             },
             onUpdateColor(color) {
-                this.newColor = this.colorByName(`${color}`).color
+                this.newColor = this.$store.getters.colorByName(`${color}`).color
             },
             async submitHandler() {
                 let updatedData = {
