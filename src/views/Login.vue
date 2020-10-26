@@ -14,15 +14,15 @@
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('email')">
                             <label>Введите Email</label>
-                            <md-input name="email" autocomplete="given-name" v-model="email"/>
+                            <md-input name="email" autocomplete="given-name" v-model="email" />
                             <span class="md-error" v-if="!$v.email.required">Требуется ввести Email</span>
                         </md-field>
                     </div>
                 </div>
 
-                <md-field :class="getValidationClass('password')">
+                <md-field  :class="getValidationClass('password')">
                     <label>Введите пароль</label>
-                    <md-input name="email" autocomplete="given-name" type="password" v-model="password"/>
+                    <md-input name="email" autocomplete="given-name" type="password" v-model="password" />
                     <span class="md-error" v-if="!$v.password.required">Требуется ввести пароль</span>
                 </md-field>
 
@@ -39,8 +39,9 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate'
+    import { validationMixin } from 'vuelidate'
     import {email, required, minLength} from 'vuelidate/lib/validators'
+    import {mapActions} from "vuex"
 
     export default {
         name: 'login',
@@ -54,7 +55,8 @@
             password: {required, minLength: minLength(6)}
         },
         methods: {
-            getValidationClass(fieldName) {
+            ...mapActions(['login']),
+            getValidationClass (fieldName) {
                 const field = this.$v[fieldName];
                 if (field) {
                     return {
@@ -72,10 +74,9 @@
                     password: this.password
                 };
                 try {
-                    await this.$store.dispatch('login', formData);
+                    await this.login(formData);
                     await this.$router.push('/')
-                } catch (e) {
-                }
+                } catch (e) {}
             }
         }
     }

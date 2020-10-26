@@ -8,7 +8,7 @@
         <p class="md-headline">{{name}}</p>
 
         <p>Сменить аватар</p>
-        <form @submit.prevent="onSubmit" novalidate class="profile-form md-layout">
+        <form @submit.prevent="onSubmit" novalidate class="profile-form md-layout" >
             <input type="file" name="file" ref="file">
             <md-button type="submit" class="md-primary">Применить</md-button>
         </form>
@@ -18,26 +18,26 @@
 </template>
 
 <script>
-    import Loader from '../components/Loader'
+    import Loader from '../components/Loader';
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         name: "Profile",
         components: {Loader},
         computed: {
+            ...mapGetters(['info', 'src']),
             name() {
-                return this.$store.getters.info.name
+                return this.info.name
             },
-            src() {
-                return this.$store.getters.src
-            }
         },
         mounted() {
             this.$store.dispatch('getPhoto')
         },
         methods: {
-            async onSubmit() {
+            ...mapActions(['getPhotoLink']),
+            async onSubmit () {
                 const file = this.$refs.file.files[0];
-                await this.$store.dispatch('getPhotoLink', file)
+                await this.getPhotoLink(file)
             }
         }
     }
@@ -49,7 +49,6 @@
         flex-direction: column;
         align-items: center;
     }
-
     .profile-form {
         display: flex;
         flex-direction: row;
@@ -81,7 +80,6 @@
             visibility: hidden;
         }
     }
-
     .profile__img {
         margin-top: 30px;
         height: 300px;

@@ -37,12 +37,12 @@
     import InputColor from "../../components/InputColor";
     import NoteList from "../../components/notes/NotesList";
     import Loader from "../../components/Loader";
-    import {mapGetters} from "vuex";
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         name: "AllNotes",
         components: {NoteList, Note, ModalAddNote, InputColor, Loader},
-        data() {
+        data () {
             return {
                 searchedNotes: [],
                 filterByType: 'all',
@@ -51,12 +51,12 @@
                 loading: true
             }
         },
-        async mounted() {
-            await this.$store.dispatch('getNotes');
+        async mounted(){
+            await this.getNotes();
             this.loading = false
         },
         computed: {
-            ...mapGetters(['notArchivedNotes']),
+            ...mapGetters(['notArchivedNotes', 'searchValue']),
             filteredNotes() {
                 if (this.searchValue) {
                     if (!this.isColorFilterRemoved) {
@@ -82,16 +82,14 @@
                 return this.filteredNotes
                     .filter(this.notFixedFilter)
             },
-            searchValue() {
-                return this.$store.getters.searchValue
-            },
         },
         methods: {
+            ...mapActions(['updateAllNotes', 'getNotes']),
             async updateIndexesFixed(data) {
-                await this.$store.dispatch('updateAllNotes', [...data, ...this.notFixed])
+                await this.updateAllNotes([...data, ...this.notFixed])
             },
             async updateIndexes(data){
-                await this.$store.dispatch('updateAllNotes', [...data, ...this.fixed])
+                await this.updateAllNotes([...data, ...this.fixed])
             },
             getColor(color) {
                 this.isColorFilterRemoved = false;
@@ -132,7 +130,7 @@
                 return next.index - prev.index
             },
             clearFilter() {
-                this.filterByColor = 'all';
+                this.filterByColor='all';
                 this.isColorFilterRemoved = true
             }
         },

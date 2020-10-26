@@ -67,8 +67,7 @@
                         <md-checkbox v-model="note.listOfTasks" :value="item">{{item}}</md-checkbox>
                     </li>
                 </ul>
-                <md-button @click="changeListItemStatus(note)" class="description-list__button">Сохранить изменения
-                </md-button>
+                <md-button @click="changeListItemStatus(note)" class="description-list__button">Сохранить изменения</md-button>
                 <md-snackbar :md-active.sync="changesSaved">Изменения сохранены!</md-snackbar>
 
             </md-card-content>
@@ -87,6 +86,7 @@
 <script>
     import Note from "../../views/notes/EditNote";
     import ModalConfirm from "../modals/ModalConfirm";
+    import {mapActions} from "vuex"
 
     export default {
         name: "NoteList",
@@ -106,6 +106,7 @@
             }
         },
         methods: {
+            ...mapActions(['removeNote', 'updateNote']),
             sortByIndex(prev, next) {
                 return next.index - prev.index
             },
@@ -135,21 +136,21 @@
                 }
             },
             removeNote(idFirebase) {
-                this.$store.dispatch('removeNote', idFirebase)
+                this.removeNote(idFirebase)
             },
             async changeStatus(note, type) {
                 let updatedData = {
                     idFirebase: note.idFirebase,
                 };
                 updatedData[type] = !note[type];
-                await this.$store.dispatch('updateNote', updatedData)
+                await this.updateNote(updatedData)
             },
             async changeListItemStatus(note) {
                 let updatedData = {
                     idFirebase: note.idFirebase,
                     listOfTasks: note.listOfTasks
                 };
-                await this.$store.dispatch('updateNote', updatedData);
+                await this.updateNote(updatedData);
                 this.changesSaved = true
             },
         },
@@ -165,7 +166,6 @@
         flex-wrap: wrap;
         margin-bottom: 20px;
     }
-
     .card {
         position: relative;
         display: flex;
@@ -193,7 +193,6 @@
             width: 100%;
             text-align: left;
         }
-
         .md-card {
             .badge {
                 position: absolute;
@@ -201,12 +200,10 @@
                 top: -5px;
                 transform: scale(1.5);
             }
-
             .md-title {
                 text-align: left;
             }
         }
-
         .md-card-content {
             white-space: pre-wrap;
             word-wrap: break-word;
@@ -215,7 +212,6 @@
             margin-bottom: 50px;
             padding: 13px;
         }
-
         .md-checkbox {
             margin-top: 0;
             margin-bottom: 8px;
@@ -229,7 +225,7 @@
         }
     }
 
-    .description-list {
+    .description-list{
         &__item {
             display: flex;
         }
@@ -240,7 +236,6 @@
             margin-bottom: 50px;
         }
     }
-
     ul {
         list-style: none;
         margin: 0;

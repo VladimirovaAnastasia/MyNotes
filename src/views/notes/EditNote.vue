@@ -51,12 +51,14 @@
     import {validationMixin} from "vuelidate";
     import {required} from 'vuelidate/lib/validators'
     import InputColor from "../../components/InputColor";
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         name: 'Note',
         mixins: [validationMixin],
         components: {InputColor},
         data: () => ({
+            title:'',
             description: '',
             newColor: null,
             sending: false
@@ -67,18 +69,20 @@
             }
         },
         computed: {
+            ...mapGetters(['noteById', 'colorByCode']),
             note() {
-                return this.$store.getters.noteById(this.$route.params.id)
+                return this.noteById(this.$route.params.id)
             },
             color() {
-                return this.$store.getters.colorByCode(`${this.note.color}`).name
+                return this.colorByCode(`${this.note.color}`).name
             }
         },
         mounted() {
             this.description = this.note.description;
-            this.newColor = this.$store.getters.colorByCode(`${this.note.color}`).color
+            this.newColor = this.colorByCode(`${this.note.color}`).color
         },
         methods: {
+            ...mapActions(['updateNote']),
             getValidationClass(fieldName) {
                 const field = this.$v[fieldName];
                 if (field) {
@@ -88,7 +92,7 @@
                 }
             },
             onUpdateColor(color) {
-                this.newColor = this.$store.getters.colorByName(`${color}`).color
+                this.newColor = this.colorByName(`${color}`).color
             },
             async submitHandler() {
                 let updatedData = {
@@ -96,7 +100,7 @@
                     description: this.description,
                     color: this.newColor
                 };
-                await this.$store.dispatch('updateNote', updatedData);
+                await this.updateNote(updatedData);
                 await this.$router.push('/notes');
                 await this.$message('Заметка была успешно отредактирована!');
             },

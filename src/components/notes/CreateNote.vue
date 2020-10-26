@@ -10,18 +10,15 @@
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('title')">
                             <label>Заголовок</label>
-                            <md-input name="title" id="first-name" autocomplete="given-name" v-model="form.title"
-                                      :disabled="sending"/>
-                            <span class="md-error"
-                                  v-if="!$v.form.title.required">Требуется ввести заголовок заметки</span>
+                            <md-input name="title" id="first-name" autocomplete="given-name" v-model="form.title" :disabled="sending" />
+                            <span class="md-error" v-if="!$v.form.title.required">Требуется ввести заголовок заметки</span>
                         </md-field>
                     </div>
                 </div>
 
-                <md-field :class="getValidationClass('description')">
+                <md-field  :class="getValidationClass('description')">
                     <label>Введите текст заметки</label>
-                    <md-textarea ref="text" class="note__description" maxlength="100"
-                                 v-model="form.description"></md-textarea>
+                    <md-textarea ref="text" class="note__description" maxlength="100" v-model="form.description"></md-textarea>
                     <span class="md-error" v-if="!$v.form.description.required">Требуется ввести текст заметки</span>
                 </md-field>
 
@@ -36,7 +33,7 @@
 
             </md-card-content>
 
-            <md-progress-bar md-mode="indeterminate" v-if="sending"/>
+            <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
             <md-card-actions>
                 <md-button class="md-primary" @click="$emit('created')">Отмена</md-button>
@@ -48,11 +45,12 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate'
+    import { validationMixin } from 'vuelidate'
     import {
         required,
     } from 'vuelidate/lib/validators'
     import InputColor from "../InputColor";
+    import {mapActions} from "vuex";
 
     export default {
         name: 'CreateNote',
@@ -78,10 +76,11 @@
             }
         },
         methods: {
+            ...mapActions(['createNote']),
             onUpdateColor(color) {
                 this.form.color = this.$store.getters.colorByName(`${color}`).color
             },
-            getValidationClass(fieldName) {
+            getValidationClass (fieldName) {
                 const field = this.$v.form[fieldName];
 
                 if (field) {
@@ -90,9 +89,9 @@
                     }
                 }
             },
-            async createNote() {
+            async createNewNote() {
                 try {
-                    await this.$store.dispatch('createNote', {
+                    const note = await this.createNote({
                         date: Date.now(),
                         title: this.form.title,
                         description: this.form.description,
@@ -104,26 +103,25 @@
                         listOfTasks: ['']
                     });
                     await this.$message('Заметка была успешно создана!');
-                } catch (e) {
-                }
+                } catch (e) {}
             },
-            clearForm() {
+            clearForm () {
                 this.$v.$reset();
                 this.form.title = null;
                 this.form.description = null;
                 this.form.color = null;
             },
-            saveUser() {
+            saveUser () {
                 this.sending = true;
 
                 window.setTimeout(() => {
-                    this.createNote();
+                    this.createNewNote();
                     this.sending = false;
                     this.clearForm();
-                    this.$emit('created')
+                    this.$emit('created');
                 }, 1000)
             },
-            validateUser() {
+            validateUser () {
                 this.$v.$touch();
 
                 if (!this.$v.$invalid) {
