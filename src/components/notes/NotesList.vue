@@ -74,7 +74,7 @@
 
             <md-card-actions class="card__buttons" md-alignment="right">
                 <md-button @click="$router.push('/note/' + note.idFirebase)">Редактировать</md-button>
-                <ModalConfirm @action="removeNote(note.idFirebase)"></ModalConfirm>
+                <ModalConfirm @action="removeCurrentNote(note.idFirebase)"></ModalConfirm>
             </md-card-actions>
 
         </div>
@@ -135,7 +135,7 @@
                     return newList
                 }
             },
-            removeNote(idFirebase) {
+            removeCurrentNote(idFirebase) {
                 this.removeNote(idFirebase)
             },
             async changeStatus(note, type) {
