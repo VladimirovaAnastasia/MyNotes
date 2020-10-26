@@ -134,6 +134,9 @@ export default {
     getters: {
         notes: s => s.notes,
         noteById: s => id => s.notes.find(t => t.idFirebase === id),
-        noteIndexById: s => id => s.notes.findIndex((t) => t.idFirebase === id)
+        noteIndexById: s => id => s.notes.findIndex((t) => t.idFirebase === id),
+        newNotes: s => s.notes.filter(t => t.isNew),
+        archivedNotes: s => s.notes.filter(t => t.isArchived),
+        notArchivedNotes: s => s.notes.filter(t => !t.isArchived),
     }
 }

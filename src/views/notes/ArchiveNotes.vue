@@ -4,8 +4,8 @@
 
         <div>
             <h2>Архив заметок</h2>
-            <NoteList :filteredNotes="filteredNotes"></NoteList>
-            <p v-show="!filteredNotes.length">Заметок нет</p>
+            <NoteList :filteredNotes="archivedNotes"></NoteList>
+            <p v-show="!archivedNotes.length">Заметок нет</p>
         </div>
 
     </div>
@@ -22,12 +22,9 @@
             await this.$store.dispatch('getNotes');
         },
         computed: {
-            notes() {
-                return this.$store.getters.notes
+            archivedNotes() {
+                return this.$store.getters.archivedNotes
             },
-            filteredNotes() {
-                return this.notes.filter(item => item.isArchived)
-            }
         }
     }
 </script>

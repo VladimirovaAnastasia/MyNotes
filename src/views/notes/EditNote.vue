@@ -6,13 +6,14 @@
 
             <h1>{{note.title}}</h1>
 
-            <form novalidate class="md-layout md-small-size-100" @submit.prevent="submitHandler">
+            <form novalidate class="md-layout md-small-size-100" @submit.prevent="validateUser">
                 <md-card class="md-layout-item md-size-100 md-small-size-100">
 
                     <md-card-content>
-                        <md-field>
+                        <md-field :class="getValidationClass('description')">
                             <label>Введите текст заметки</label>
-                            <md-textarea maxlength="100" v-model="form.description"></md-textarea>
+                            <md-textarea maxlength="100" v-model="description"></md-textarea>
+                            <span class="md-error" v-if="!$v.description.required">Требуется ввести текст заметки</span>
                         </md-field>
 
                         <div class="md-layout md-gutter">
@@ -56,21 +57,13 @@
         mixins: [validationMixin],
         components: {InputColor},
         data: () => ({
-            form: {
-                title: '',
-                description: '',
-                color: null,
-            },
+            description: '',
+            newColor: null,
             sending: false
         }),
         validations: {
-            form: {
-                title: {
-                    required
-                },
-                description: {
-                    required
-                }
+            description: {
+                required
             }
         },
         computed: {
@@ -82,13 +75,12 @@
             }
         },
         mounted() {
-            this.form.title = this.note.title;
-            this.form.description = this.note.description;
-            this.form.color = this.$store.getters.colorByCode(`${this.note.color}`).color
+            this.description = this.note.description;
+            this.newColor = this.$store.getters.colorByCode(`${this.note.color}`).color
         },
         methods: {
             getValidationClass(fieldName) {
-                const field = this.$v.form[fieldName];
+                const field = this.$v[fieldName];
                 if (field) {
                     return {
                         'md-invalid': field.$invalid && field.$dirty
@@ -96,17 +88,24 @@
                 }
             },
             onUpdateColor(color) {
-                this.form.color = this.$store.getters.colorByName(`${color}`).color
+                this.newColor = this.$store.getters.colorByName(`${color}`).color
             },
             async submitHandler() {
                 let updatedData = {
                     idFirebase: this.note.idFirebase,
-                    description: this.form.description,
-                    color: this.form.color
+                    description: this.description,
+                    color: this.newColor
                 };
                 await this.$store.dispatch('updateNote', updatedData);
-                await this.$router.push('/');
+                await this.$router.push('/notes');
                 await this.$message('Заметка была успешно отредактирована!');
+            },
+            validateUser () {
+                this.$v.$touch();
+
+                if (!this.$v.$invalid) {
+                    this.submitHandler()
+                }
             }
         },
     }

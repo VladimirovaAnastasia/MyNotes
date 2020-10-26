@@ -8,7 +8,7 @@
 
             <ModalAddNote></ModalAddNote>
 
-            <div class="all-notes__search" v-show="notes.length">
+            <div class="all-notes__search" v-show="notArchivedNotes.length">
                 <md-field>
                     <label>Фильтровать по цвету</label>
                     <InputColor @updateColor="getColor" :clearField="isColorFilterRemoved"></InputColor>
@@ -21,8 +21,7 @@
 
             <p v-show="fixed.length" class="md-headline all-notes__title">Закрепленные</p>
             <NoteList v-show="fixed.length" :filteredNotes="fixed" @updateIndexes="updateIndexesFixed"></NoteList>
-            <p v-show="fixed.length && notFixed.length" class="md-headline all-notes__title"
-               @updateIndexes="updateIndexes">Остальные заметки</p>
+            <p v-show="fixed.length && notFixed.length" class="md-headline all-notes__title" @updateIndexes="updateIndexes">Остальные заметки</p>
             <NoteList v-show="notFixed.length" :filteredNotes="notFixed"></NoteList>
             <p v-show="!filteredNotes.length" class="all-notes__empty">Заметок нет</p>
 
@@ -57,26 +56,22 @@
             this.loading = false
         },
         computed: {
-            ...mapGetters(['notes']),
+            ...mapGetters(['notArchivedNotes']),
             filteredNotes() {
                 if (this.searchValue) {
                     if (!this.isColorFilterRemoved) {
-                        return this.notes
-                            .filter(this.archivedFilter)
+                        return this.notArchivedNotes
                             .filter(this.colorFilter)
                             .filter(this.searchFilter)
                     } else {
-                        return this.notes
-                            .filter(this.archivedFilter)
+                        return this.notArchivedNotes
                             .filter(this.searchFilter)
                     }
-                } else if (!this.isColorFilterRemoved) {
-                    return this.notes
-                        .filter(this.archivedFilter)
+                } else if (!this.isColorFilterRemoved){
+                    return this.notArchivedNotes
                         .filter(this.colorFilter)
                 } else {
-                    return this.notes
-                        .filter(this.archivedFilter)
+                    return this.notArchivedNotes
                 }
             },
             fixed() {
@@ -91,27 +86,17 @@
                 return this.$store.getters.searchValue
             },
         },
-        /*watch: {
-            searchValue() {
-                this.searchFilter()
-            }
-        },*/
         methods: {
             async updateIndexesFixed(data) {
                 await this.$store.dispatch('updateAllNotes', [...data, ...this.notFixed])
             },
-            async updateIndexes(data) {
+            async updateIndexes(data){
                 await this.$store.dispatch('updateAllNotes', [...data, ...this.fixed])
             },
             getColor(color) {
                 this.isColorFilterRemoved = false;
                 if (color) {
                     this.filterByColor = this.$store.getters.colorByName(`${color}`).color
-                }
-            },
-            archivedFilter(item) {
-                if (!item.isArchived) {
-                    return item
                 }
             },
             colorFilter(item) {
@@ -175,17 +160,14 @@
                 top: 15px;
             }
         }
-
         &__empty {
             position: relative;
             left: 5px;
         }
     }
-
     .md-field {
         width: 270px;
     }
-
     ul {
         list-style: none;
         margin: 0;

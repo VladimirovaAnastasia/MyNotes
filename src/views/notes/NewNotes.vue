@@ -4,8 +4,8 @@
 
         <div>
             <h2>Новые заметки</h2>
-            <NoteList :filteredNotes="filteredNotes"></NoteList>
-            <p v-show="!filteredNotes.length">Заметок нет</p>
+            <NoteList :filteredNotes="newNotes"></NoteList>
+            <p v-show="!newNotes.length">Заметок нет</p>
         </div>
 
     </div>
@@ -22,12 +22,9 @@
             await this.$store.dispatch('getNotes');
         },
         computed: {
-            notes() {
-                return this.$store.getters.notes
+            newNotes() {
+                return this.$store.getters.newNotes
             },
-            filteredNotes() {
-                return this.notes.filter(item => item.isNew)
-            }
         }
     }
 </script>
