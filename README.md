@@ -1,5 +1,5 @@
 # My notes
-With help of this app you can create your notes, fixed main notes, push them into archive and so on...
+With help of this app you can create your notes, fixe main notes, push them into archive and so on...
 
 https://vue-3be01.web.app/login
 If you need permission, please, ask me! 
